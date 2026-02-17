@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 import { SYSTEM_PROMPT } from './prompt';
 import { getContact } from './tools/getContact';
@@ -10,54 +10,113 @@ import { getResume } from './tools/getResume';
 import { getSkills } from './tools/getSkills';
 import { getSports } from './tools/getSport';
 
+export const runtime = 'nodejs';
 export const maxDuration = 30;
 
-// ❌ Pas besoin de l'export ici, Next.js n'aime pas ça
+const DEFAULT_DASHSCOPE_BASE_URL =
+  'https://dashscope.aliyuncs.com/compatible-mode/v1';
+const DEFAULT_DASHSCOPE_MODEL = 'qwen-plus';
+const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN ?? '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  Vary: 'Origin',
+};
+
+function getModelConfig() {
+  const apiKey =
+    process.env.CHAT_API_KEY ??
+    process.env.DASHSCOPE_API_KEY ??
+    process.env.OPENAI_API_KEY;
+
+  const configuredModel =
+    process.env.CHAT_MODEL ??
+    process.env.DASHSCOPE_MODEL ??
+    process.env.OPENAI_MODEL;
+
+  const configuredBaseURL =
+    process.env.CHAT_BASE_URL ??
+    process.env.DASHSCOPE_BASE_URL ??
+    process.env.OPENAI_BASE_URL;
+
+  const modelLooksLikeQwen = configuredModel
+    ?.trim()
+    .toLowerCase()
+    .startsWith('qwen');
+
+  const usesDashScope =
+    Boolean(process.env.DASHSCOPE_API_KEY) ||
+    Boolean(process.env.DASHSCOPE_BASE_URL) ||
+    configuredBaseURL?.includes('dashscope.aliyuncs.com') ||
+    Boolean(modelLooksLikeQwen);
+
+  const baseURL =
+    configuredBaseURL ??
+    (usesDashScope ? DEFAULT_DASHSCOPE_BASE_URL : undefined);
+
+  const model =
+    configuredModel ??
+    (usesDashScope ? DEFAULT_DASHSCOPE_MODEL : DEFAULT_OPENAI_MODEL);
+
+  return { apiKey, baseURL, model };
+}
+
 function errorHandler(error: unknown) {
-  if (error == null) {
-    return 'Unknown error';
-  }
-  if (typeof error === 'string') {
-    return error;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
+  if (error == null) return 'Unknown error';
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.message;
   return JSON.stringify(error);
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders });
 }
 
 export async function POST(req: Request) {
   try {
+    const { apiKey, baseURL, model } = getModelConfig();
+
+    if (!apiKey) {
+      return new Response(
+        'Missing API key. Set CHAT_API_KEY, DASHSCOPE_API_KEY, or OPENAI_API_KEY.',
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    const llm = createOpenAI({ apiKey, baseURL });
     const { messages } = await req.json();
-    console.log('[CHAT-API] Incoming messages:', messages);
 
-    messages.unshift(SYSTEM_PROMPT);
-
-    const tools = {
-      getProjects,
-      getPresentation,
-      getResume,
-      getContact,
-      getSkills,
-      getSports,
-      getCrazy,
-      getInternship,
-    };
+    if (!Array.isArray(messages)) {
+      return new Response('Invalid request body: messages must be an array.', {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
 
     const result = streamText({
-      model: openai('gpt-4o-mini'),
-      messages,
+      model: llm(model),
+      messages: [SYSTEM_PROMPT, ...messages],
       toolCallStreaming: true,
-      tools,
+      tools: {
+        getProjects,
+        getPresentation,
+        getResume,
+        getContact,
+        getSkills,
+        getSports,
+        getCrazy,
+        getInternship,
+      },
       maxSteps: 2,
     });
 
     return result.toDataStreamResponse({
       getErrorMessage: errorHandler,
+      headers: corsHeaders,
     });
   } catch (err) {
-    console.error('Global error:', err);
-    const errorMessage = errorHandler(err);
-    return new Response(errorMessage, { status: 500 });
+    return new Response(errorHandler(err), { status: 500, headers: corsHeaders });
   }
 }
