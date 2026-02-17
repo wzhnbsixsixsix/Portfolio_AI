@@ -43,7 +43,7 @@ const Skills = () => {
     {
       category: 'Design & Creative Tools',
       icon: <PenTool className="h-5 w-5" />,
-      skills: ['Figma', 'Davinci Code', 'Illustrator', 'Canva', 'Keynote'],
+      skills: ['Davinci Code', 'Illustrator', 'Canva', 'Keynote'],
       color: 'bg-indigo-50 text-indigo-600 border border-indigo-200',
     },
     {

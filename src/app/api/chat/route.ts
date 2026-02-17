@@ -63,31 +63,46 @@ function getModelConfig() {
   return { apiKey, baseURL, model };
 }
 
+// ❌ Pas besoin de l'export ici, Next.js n'aime pas ça
 function errorHandler(error: unknown) {
-  if (error == null) return 'Unknown error';
-  if (typeof error === 'string') return error;
-  if (error instanceof Error) return error.message;
+  if (error == null) {
+    return 'Unknown error';
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
   return JSON.stringify(error);
 }
 
 export async function OPTIONS() {
-  return new Response(null, { status: 204, headers: corsHeaders });
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
 }
 
 export async function POST(req: Request) {
   try {
     const { apiKey, baseURL, model } = getModelConfig();
-
     if (!apiKey) {
       return new Response(
         'Missing API key. Set CHAT_API_KEY, DASHSCOPE_API_KEY, or OPENAI_API_KEY.',
-        { status: 500, headers: corsHeaders }
+        {
+          status: 500,
+          headers: corsHeaders,
+        }
       );
     }
 
-    const llm = createOpenAI({ apiKey, baseURL });
-    const { messages } = await req.json();
+    const llm = createOpenAI({
+      apiKey,
+      baseURL,
+    });
 
+    const { messages } = await req.json();
     if (!Array.isArray(messages)) {
       return new Response('Invalid request body: messages must be an array.', {
         status: 400,
@@ -95,20 +110,22 @@ export async function POST(req: Request) {
       });
     }
 
+    const tools = {
+      getProjects,
+      getPresentation,
+      getResume,
+      getContact,
+      getSkills,
+      getSports,
+      getCrazy,
+      getInternship,
+    };
+
     const result = streamText({
       model: llm(model),
       messages: [SYSTEM_PROMPT, ...messages],
       toolCallStreaming: true,
-      tools: {
-        getProjects,
-        getPresentation,
-        getResume,
-        getContact,
-        getSkills,
-        getSports,
-        getCrazy,
-        getInternship,
-      },
+      tools,
       maxSteps: 2,
     });
 
@@ -117,6 +134,8 @@ export async function POST(req: Request) {
       headers: corsHeaders,
     });
   } catch (err) {
-    return new Response(errorHandler(err), { status: 500, headers: corsHeaders });
+    console.error('Global error:', err);
+    const errorMessage = errorHandler(err);
+    return new Response(errorMessage, { status: 500, headers: corsHeaders });
   }
 }

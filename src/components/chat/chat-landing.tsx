@@ -7,13 +7,9 @@ import React from 'react';
 
 interface ChatLandingProps {
   submitQuery: (query: string) => void;
-  hasReachedLimit?: boolean;
 }
 
-const ChatLanding: React.FC<ChatLandingProps> = ({
-  submitQuery,
-  hasReachedLimit = false,
-}) => {
+const ChatLanding: React.FC<ChatLandingProps> = ({ submitQuery }) => {
   // Suggested questions that the user can click on
   const suggestedQuestions = [
     {
