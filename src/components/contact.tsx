@@ -7,33 +7,14 @@ import { ChevronRight } from 'lucide-react';
 export function Contact() {
   // Contact information
   const contactInfo = {
-    name: 'Raphael Giraud',
-    email: 'raphaelgiraud12@gmail.com',
-    handle: '@Raphael.Giraud',
+    name: 'Zenghuan Wang',
+    email: 'w905840774@gmail',
+    phone: '+86 17665252185',
+    handle: '@wzhnbsixsixsix',
     socials: [
       {
-        name: 'LinkedIn',
-        url: 'https://www.linkedin.com/in/raphael-giraud-60939519a/',
-      },
-      {
-        name: 'Youtube',
-        url: 'https://www.youtube.com/@toukoum',
-      },
-      {
-        name: 'Instagram',
-        url: 'https://www.instagram.com/raphael.giraud/',
-      },
-      {
-        name: 'Discord',
-        url: 'https://discord.com/users/toukoum',
-      },
-      {
-        name: 'Github',
-        url: 'https://github.com/toukoum',
-      },
-      {
-        name: 'X',
-        url: 'https://x.com/toukoumcode',
+        name: 'GitHub',
+        url: 'https://github.com/wzhnbsixsixsix',
       },
     ],
   };
@@ -68,6 +49,12 @@ export function Contact() {
               </span>
               <ChevronRight className="h-5 w-5 text-blue-500 transition-transform duration-300 group-hover:translate-x-1" />
             </div>
+          </div>
+
+          <div className="mb-5">
+            <span className="text-sm text-muted-foreground sm:text-base">
+              {contactInfo.phone}
+            </span>
           </div>
 
           {/* Social Links */}

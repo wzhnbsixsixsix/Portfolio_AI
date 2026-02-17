@@ -1,25 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Photos, PhotoItem } from './photos';
 
 const Crazy = () => {
-  const sportPhotos: PhotoItem[] = [
-    {
-      src: '/blancmont.JPG',
-      alt: 'Mont Blanc',
-      caption: 'On top of Mont Blanc (me in blue behind)',
-    },
-  ];
-
   return (
     <div className="mx-auto w-full">
       <div className="mb-8">
         <h2 className="text-foreground text-3xl font-semibold md:text-4xl">
-          Mont Blanc (4810m)
+          A Standout Moment
         </h2>
+        <p className="mt-4 text-muted-foreground">
+          This section is being refreshed with a personal highlight story. You
+          can still ask me about challenges I have taken on.
+        </p>
       </div>
-      <Photos photos={sportPhotos} />
     </div>
   );
 };

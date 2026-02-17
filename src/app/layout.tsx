@@ -3,7 +3,6 @@ import { cn } from '@/lib/utils';
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Script from 'next/script';
 import './globals.css';
 
 // Load Inter font for non-Apple devices
@@ -13,43 +12,40 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Toukoum Portfolio',
+  title: 'Zenghuan Wang | AI Engineer',
   description:
-    'Interactive portfolio with an AI-powered Memoji that answers questions about me, my skills, and my experience',
+    'Interactive AI portfolio of Zenghuan Wang, featuring projects, skills, education, and contact information.',
   keywords: [
-    'Toukoum',
+    'Zenghuan Wang',
     'Portfolio',
-    'Developer',
+    'AI Engineer',
     'AI',
     'Interactive',
-    'Memoji',
-    'Web Development',
-    'Full Stack',
+    'Machine Learning',
+    'Data Science',
     'Next.js',
     'React',
   ],
   authors: [
     {
-      name: 'Toukoum',
-      url: 'https://toukoum.fr',
+      name: 'Zenghuan Wang',
+      url: 'https://github.com/wzhnbsixsixsix',
     },
   ],
-  creator: 'Toukoum',
+  creator: 'Zenghuan Wang',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://toukoum.fr',
-    title: 'Toukoum Portfolio',
+    url: 'https://github.com/wzhnbsixsixsix',
+    title: 'Zenghuan Wang | AI Engineer',
     description:
-      'Interactive portfolio with an AI-powered Memoji that answers questions about me',
-    siteName: 'Toukoum Portfolio',
+      'Interactive AI portfolio of Zenghuan Wang.',
+    siteName: 'Zenghuan Wang Portfolio',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toukoum Portfolio',
-    description:
-      'Interactive portfolio with an AI-powered Memoji that answers questions about me',
-    creator: '@toukoum',
+    title: 'Zenghuan Wang | AI Engineer',
+    description: 'Interactive AI portfolio of Zenghuan Wang.',
   },
   icons: {
     icon: [
@@ -76,13 +72,6 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
         <link rel="icon" href="/favicon.svg" sizes="any" />
-        <Script
-          defer
-          data-website-id="68e067ba369b1b7f1f096056"
-          data-domain="toukoum.fr"
-          data-allow-localhost="true"
-          src="https://datafa.st/js/script.js"
-        ></Script>
       </head>
       <body
         className={cn(

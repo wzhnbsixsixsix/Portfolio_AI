@@ -5,9 +5,9 @@ import { z } from "zod";
 
 export const getCrazy = tool({
   description:
-    "This tool will the craziest thing I've ever done. use it when the user ask someting like : 'What the craziest thing you've ever done?'",
+    "This tool returns one standout personal moment. Use it for questions such as 'what's the craziest thing you've ever done?'",
   parameters: z.object({}),
   execute: async () => {
-    return "Above is a photo of Me On top of Mont Blanc, the highest mountain in the Alps and the highest in Europe. I made it with a friends of mine without guide, it was a great experience! You can see the 80km/h of wind on the photo! I made a youtube video of this adventure here: https://www.youtube.com/watch?v=rufGMSgzUOk&ab_channel=Toukoum";
+    return "Above is a personal highlight card. I'm currently updating this section with my own latest life and challenge moments.";
   },
 });

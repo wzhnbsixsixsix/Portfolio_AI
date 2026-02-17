@@ -6,6 +6,6 @@ export const getContact = tool({
     'This tool show a my contact informations.',
   parameters: z.object({}),
   execute: async () => {
-    return "Here is my contact informations above, Feel free to contact me I will be happy to answer you 😉";
+    return "You can find my contact card above. Feel free to reach out by email, phone, or GitHub.";
   },
 });

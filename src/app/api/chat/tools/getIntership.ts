@@ -3,25 +3,25 @@ import { z } from 'zod';
 
 export const getInternship = tool({
   description:
-    "Gives a summary of what kind of internship I'm looking for, plus my contact info and how to reach me. Use this tool when the user asks about my internship search or how to contact me for opportunities.",
+    "Gives a summary of my internship/job interests plus my contact details. Use this tool when the user asks about opportunities.",
   parameters: z.object({}),
   execute: async () => {
-    return `Here’s what I’m looking for 👇
+    return `Here is what I am looking for 👇
 
-- 📅 **Duration**: 6-month internship starting **September 2025**
-- 🌍 **Location**: Preferably **San Francisco** or anywhere in the **United States**
-- 🧑‍💻 **Focus**: AI development, full-stack web apps, SaaS, agentic workflows
-- 🛠️ **Stack**: Python, React/Next.js, Tailwind CSS, TypeScript, GPT, RAG, etc.
-- 💼 **Visa**: I’m based in Paris 🇫🇷 so I might need **J-1 sponsorship**
-- ✅ **What I bring**: Real experience with secure on-prem GPTs (Lighton), deepsearch engines, custom RAG tools, and hackathon wins like **ETH Oxford** & **Paris Blockchain Week**
-- 🔥 I move fast, learn faster, and I’m HUNGRYYYYY for big challenges
+- 🌍 **Location**: Shenzhen, China
+- 🧑‍💻 **Focus**: AI engineering, full-stack AI applications, and practical ML products
+- 🛠️ **Current Direction**: Building and expanding my AI portfolio while studying
+- 🎓 **Education**:
+  - University of Exeter (2024-2026)
+  - Guangdong (2022-2024)
+  - City University of Hong Kong (2026-2028)
 
-📬 **Contact me** via:
-- Email: raphaelgiraud12@gmail.com
-- LinkedIn: [linkedin.com/in/raphael-giraud](https://www.linkedin.com/in/raphael-giraud-ai/)
-- GitHub: [github.com/raphaelgiraud](https://github.com/toukoum)
+📬 **Contact me**:
+- Email: w905840774@gmail
+- Phone: +86 17665252185
+- GitHub: [github.com/wzhnbsixsixsix](https://github.com/wzhnbsixsixsix)
 
-Let's build cool shit together ✌️
+Open to relevant opportunities and collaborations.
     `;
   },
 });

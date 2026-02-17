@@ -35,30 +35,29 @@ interface HelperBoostProps {
 
 const questions = {
   Me: 'Who are you? I want to know more about you.',
-  Projects: 'What are your projects? What are you working on right now?',
+  Projects: 'What projects are you building right now?',
   Skills: 'What are your skills? Give me a list of your soft and hard skills.',
-  Fun: "What the craziest thing you've ever done? (mb?) What are your hobbies? ",
-  Contact:
-    'How can I reach you? What kind of project would make you say "yes" immediately?',
+  Study: 'Tell me about your education path and future plans.',
+  Contact: 'How can I reach you?',
 };
 
 const questionConfig = [
   { key: 'Me', color: '#329696', icon: Laugh },
   { key: 'Projects', color: '#3E9858', icon: BriefcaseBusiness },
   { key: 'Skills', color: '#856ED9', icon: Layers },
-  { key: 'Fun', color: '#B95F9D', icon: PartyPopper },
+  { key: 'Study', color: '#B95F9D', icon: PartyPopper },
   { key: 'Contact', color: '#C19433', icon: UserRoundSearch },
 ];
 
 // Helper drawer data
 const specialQuestions = [
-  'Mountain Bike you said?? Show me!',
+  'Tell me your background in one minute.',
   'Who are you?',
   'Can I see your resume?',
-  'What projects are you most proud of?',
+  'What projects are you most proud of right now?',
   'What are your skills?',
   'How can I reach you?',
-  "What's the craziest thing you've ever done?",
+  'Tell me about your education path.',
 ];
 
 const questionsByCategory = [
@@ -80,9 +79,9 @@ const questionsByCategory = [
     questions: [
       'Can I see your resume?',
       'What makes you a valuable team member?',
-      'Where are you working now?',
+      'What kind of opportunities are you looking for?',
       'Why should I hire you?',
-      "What's your educational background?",
+      "What's your current focus?",
     ],
   },
   {
@@ -97,18 +96,17 @@ const questionsByCategory = [
     icon: GraduationCapIcon,
     questions: [
       'What are your skills?',
-      'How was your experience at École 42?',
+      'Which AI skills are you currently strongest at?',
     ],
   },
   {
-    id: 'fun',
-    name: 'Fun',
+    id: 'study',
+    name: 'Study',
     icon: PartyPopper,
     questions: [
-      'Mountain Bike you said?? Show me!',
-      "What's the craziest thing you've ever done?",
-      'Mac or PC?',
-      'What are you certain about that 90% get wrong?',
+      'Tell me about your education path.',
+      'What did you learn most recently?',
+      'How do you plan your next two years?',
     ],
   },
   {
@@ -117,8 +115,8 @@ const questionsByCategory = [
     icon: MailIcon,
     questions: [
       'How can I reach you?',
-      "What kind of project would make you say 'yes' immediately?",
       'Where are you located?',
+      'What kind of project are you looking to join?',
     ],
   },
 ];
