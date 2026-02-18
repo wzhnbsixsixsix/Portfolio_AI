@@ -47,16 +47,6 @@ export const metadata: Metadata = {
     title: 'Zenghuan Wang | AI Engineer',
     description: 'Interactive AI portfolio of Zenghuan Wang.',
   },
-  icons: {
-    icon: [
-      {
-        url: '/favicon.svg',
-        sizes: 'any',
-      },
-    ],
-    shortcut: '/favicon.svg?v=2',
-    apple: '/apple-touch-icon.svg?v=2',
-  },
 };
 
 export default function RootLayout({
@@ -71,7 +61,6 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
-        <link rel="icon" href="/favicon.svg" sizes="any" />
       </head>
       <body
         className={cn(
