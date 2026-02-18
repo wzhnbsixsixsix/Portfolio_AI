@@ -4,9 +4,7 @@ import GuestbookSection from '@/components/guestbook/guestbook-section';
 import Presentation from '@/components/presentation';
 import AllProjects from '@/components/projects/AllProjects';
 import Skills from '@/components/skills';
-import { motion } from 'framer-motion';
 import {
-  ArrowUp,
   ChevronLeft,
   ChevronRight,
   FolderKanban,
@@ -15,11 +13,11 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react';
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import Chat from './chat';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import HomeLandingChat from './home-landing-chat';
 
 const sections = [
-  { key: 'chat', label: 'Chat', icon: MessageSquareText },
+  { key: 'home', label: 'Home', icon: MessageSquareText },
   { key: 'about', label: 'About', icon: UserRound },
   { key: 'projects', label: 'Featured Projects', icon: FolderKanban },
   { key: 'skills', label: 'My Skills', icon: Sparkles },
@@ -28,80 +26,6 @@ const sections = [
 
 const clampIndex = (index: number) =>
   Math.max(0, Math.min(index, sections.length - 1));
-
-function ShrinkingChatStrip({
-  active,
-  onJumpToChat,
-  onSubmitQuery,
-  floating = false,
-}: {
-  active: boolean;
-  onJumpToChat: () => void;
-  onSubmitQuery: (query: string) => void;
-  floating?: boolean;
-}) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [query, setQuery] = useState('');
-  const isCollapsed = active && !isHovered;
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const value = query.trim();
-    if (!value) {
-      onJumpToChat();
-      return;
-    }
-
-    onSubmitQuery(value);
-    setQuery('');
-  };
-
-  return (
-    <div className={`${floating ? 'flex w-full justify-center' : 'mb-8 flex w-full justify-center'}`}>
-      <motion.div
-        initial={false}
-        animate={{
-          maxWidth: isCollapsed ? 320 : 760,
-          scale: isCollapsed ? 0.92 : 1,
-          opacity: active ? 1 : 0.9,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 250,
-          damping: 28,
-        }}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        className="w-full"
-      >
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto flex items-center rounded-full border border-[#E5E5E9] bg-[#ECECF0] py-2 pr-2 pl-6 shadow-sm"
-        >
-          <input
-            value={isCollapsed ? '' : query}
-            readOnly={isCollapsed}
-            onClick={isCollapsed ? onJumpToChat : undefined}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={
-              isCollapsed
-                ? 'Chat'
-                : 'Ask from this page and jump back to chat...'
-            }
-            className="text-md w-full border-none bg-transparent placeholder:text-gray-500 focus:outline-none"
-          />
-          <button
-            type="submit"
-            className="flex items-center justify-center rounded-full bg-[#0171E3] p-2 text-white transition-colors hover:bg-blue-600"
-            aria-label="Go back to chat"
-          >
-            <ArrowUp className="h-6 w-6" />
-          </button>
-        </form>
-      </motion.div>
-    </div>
-  );
-}
 
 export default function ChatHorizontalPages() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,16 +42,6 @@ export default function ChatHorizontalPages() {
     });
     setActiveIndex(safeIndex);
   }, []);
-
-  const submitSharedQuery = useCallback(
-    (query: string) => {
-      window.dispatchEvent(
-        new CustomEvent('portfolio:submit-query', { detail: query })
-      );
-      scrollToIndex(0);
-    },
-    [scrollToIndex]
-  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -202,28 +116,15 @@ export default function ChatHorizontalPages() {
         <ChevronRight className="h-5 w-5" />
       </button>
 
-      {activeIndex > 0 && (
-        <div className="pointer-events-none absolute right-0 bottom-5 left-0 z-[75] px-4">
-          <div className="pointer-events-auto mx-auto w-full max-w-6xl">
-            <ShrinkingChatStrip
-              active={activeIndex === 1}
-              onJumpToChat={() => scrollToIndex(0)}
-              onSubmitQuery={submitSharedQuery}
-              floating
-            />
-          </div>
-        </div>
-      )}
-
       <div
         ref={containerRef}
         className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <section className="h-full w-screen flex-none snap-start">
-          <Chat embedded />
+        <section className="h-full w-screen flex-none snap-start overflow-y-auto pt-14">
+          <HomeLandingChat />
         </section>
 
-        <section className="h-full w-screen flex-none snap-start overflow-y-auto px-6 pt-24 pb-10">
+        <section className="h-full w-screen flex-none snap-start overflow-y-auto px-6 pt-24 pb-16">
           <div className="mx-auto w-full max-w-6xl">
             <Presentation />
           </div>
