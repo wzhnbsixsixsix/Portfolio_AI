@@ -65,7 +65,7 @@ export function Presentation() {
     <div className="mx-auto w-full max-w-5xl py-6 font-sans">
       <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         {/* Image section */}
-        <div className="relative mx-auto aspect-[4/3] w-full max-w-md">
+        <div className="relative mx-auto aspect-[3/4] w-full max-w-sm">
           <div className="relative h-full w-full overflow-hidden rounded-2xl">
             <motion.div
               initial={{ scale: 0.92, opacity: 0 }}
