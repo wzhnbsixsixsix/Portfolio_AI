@@ -1,12 +1,12 @@
 'use client';
 
 import { Suspense } from 'react';
-import Chat from '@/components/chat/chat';
+import ChatHorizontalPages from '@/components/chat/chat-horizontal-pages';
 
 export default function Page() {
   return (
-    <Suspense fallback={<div>Chargement du chat...</div>}>
-      <Chat />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatHorizontalPages />
     </Suspense>
   );
 }

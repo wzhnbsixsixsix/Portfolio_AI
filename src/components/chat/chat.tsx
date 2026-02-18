@@ -123,7 +123,11 @@ const MOTION_CONFIG = {
   },
 };
 
-const Chat = () => {
+interface ChatProps {
+  embedded?: boolean;
+}
+
+const Chat = ({ embedded = false }: ChatProps) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query');
@@ -282,8 +286,10 @@ const Chat = () => {
   // Calculate header height based on hasActiveTool
   const headerHeight = hasActiveTool ? 100 : 180;
 
+  const topLayerPositionClass = embedded ? 'absolute' : 'fixed';
+
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className={`relative overflow-hidden ${embedded ? 'h-full' : 'h-screen'}`}>
       <div className="absolute top-6 right-8 z-51 flex flex-col-reverse items-center justify-center gap-1 md:flex-row">
         <WelcomeModal
           trigger={
@@ -296,7 +302,7 @@ const Chat = () => {
 
       {/* Fixed Avatar Header with Gradient */}
       <div
-        className="fixed top-0 right-0 left-0 z-50"
+        className={`${topLayerPositionClass} top-0 right-0 left-0 z-50`}
         style={{
           background:
             'linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 30%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%)',
