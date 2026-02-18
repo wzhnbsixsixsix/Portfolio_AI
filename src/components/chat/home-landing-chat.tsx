@@ -10,6 +10,7 @@ import {
   Laugh,
   Layers,
   Loader2,
+  Minimize2,
   PartyPopper,
   UserRoundSearch,
 } from 'lucide-react';
@@ -38,6 +39,7 @@ export default function HomeLandingChat() {
   const chatApiPath = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim() || '/api/chat';
   const scrollRef = useRef<HTMLDivElement>(null);
   const [chatError, setChatError] = useState('');
+  const [isChatExpanded, setIsChatExpanded] = useState(false);
 
   const {
     messages,
@@ -63,6 +65,7 @@ export default function HomeLandingChat() {
   const submitQuery = async (query: string) => {
     if (!query.trim() || isLoading) return;
     setChatError('');
+    setIsChatExpanded(true);
     await append({
       role: 'user',
       content: query.trim(),
@@ -91,27 +94,33 @@ export default function HomeLandingChat() {
         </div>
       </div>
 
-      <motion.div
-        className="z-10 mt-24 mb-8 flex flex-col items-center text-center md:mt-8 md:mb-10"
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.65, ease: 'easeOut' }}
-      >
-        <h2 className="text-secondary-foreground mt-1 text-xl font-semibold md:text-2xl">
-          Hey, I&apos;m Zenghuan Wang 👋
-        </h2>
-        <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
-          AI Engineer
-        </h1>
-      </motion.div>
+      <AnimatePresence initial={false}>
+        {!isChatExpanded ? (
+          <motion.div
+            key="hero-title"
+            className="z-10 mt-24 mb-8 flex flex-col items-center overflow-hidden text-center md:mt-8 md:mb-10"
+            initial={{ opacity: 0, y: -40, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -24, height: 0 }}
+            transition={{ duration: 0.55, ease: 'easeOut' }}
+          >
+            <h2 className="text-secondary-foreground mt-1 text-xl font-semibold md:text-2xl">
+              Hey, I&apos;m Zenghuan Wang 👋
+            </h2>
+            <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+              AI Engineer
+            </h1>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       <div
         className={`z-10 flex w-full max-w-5xl flex-1 flex-col items-center ${
-          hasStartedChat ? 'justify-start pt-2 md:pt-4' : 'justify-center'
+          isChatExpanded ? 'justify-start pt-2 md:pt-4' : 'justify-center'
         }`}
       >
         <AnimatePresence mode="wait">
-          {hasStartedChat ? (
+          {hasStartedChat && isChatExpanded ? (
             <motion.div
               key="chat-panel"
               initial={{
@@ -126,7 +135,7 @@ export default function HomeLandingChat() {
                 y: 0,
                 scaleX: 1,
                 scaleY: 1,
-                height: 'clamp(360px,58vh,640px)',
+                height: 'clamp(320px,48vh,540px)',
               }}
               exit={{ opacity: 0, y: 12, scaleX: 0.9, scaleY: 0.7, height: 0 }}
               transition={{
@@ -135,73 +144,87 @@ export default function HomeLandingChat() {
                 damping: 24,
                 mass: 0.9,
               }}
-              className="mb-4 w-full overflow-hidden rounded-3xl border border-white/40 bg-white/45 shadow-[0_20px_60px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
+              className="relative mb-4 w-full overflow-visible rounded-3xl border border-white/40 bg-white/45 shadow-[0_20px_60px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
               style={{ transformOrigin: '50% 100%' }}
             >
-              <div
-                ref={scrollRef}
-                className="custom-scrollbar h-full overflow-y-auto px-4 py-4 md:px-6"
+              <button
+                type="button"
+                onClick={() => setIsChatExpanded(false)}
+                className="absolute top-0 right-8 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/55 bg-white/45 px-4 py-2 text-xs text-neutral-700 shadow-[0_10px_25px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:bg-white/60"
+                aria-label="Minimize chat panel"
               >
-                <div className="space-y-4">
-                  {messages.map((message) => {
-                    if (message.role === 'user') {
-                      return (
-                        <div key={message.id} className="flex justify-end">
-                          <div className="max-w-[85%] rounded-2xl bg-[#0171E3] px-4 py-2.5 text-sm text-white">
-                            {message.content}
-                          </div>
-                        </div>
-                      );
-                    }
+                <span className="flex items-center gap-1.5">
+                  <Minimize2 className="h-3.5 w-3.5" />
+                  Minimize
+                </span>
+              </button>
 
-                    if (message.role === 'assistant') {
-                      const toolInvocations =
-                        message.parts
-                          ?.filter(
-                            (part) =>
-                              part.type === 'tool-invocation' &&
-                              part.toolInvocation?.state === 'result'
-                          )
-                          .map((part) =>
-                            part.type === 'tool-invocation'
-                              ? part.toolInvocation
-                              : null
-                          )
-                          .filter(Boolean) || [];
-
-                      return (
-                        <div key={message.id} className="space-y-3">
-                          {toolInvocations.length > 0 ? (
-                            <ToolRenderer
-                              toolInvocations={toolInvocations as any[]}
-                              messageId={message.id}
-                            />
-                          ) : null}
-                          {message.content?.trim() ? (
-                            <div className="max-w-[90%] rounded-2xl bg-white/80 px-4 py-3 text-sm text-neutral-800">
-                              <ChatMessageContent
-                                message={message as any}
-                                isLast={false}
-                                isLoading={isLoading}
-                                reload={reload}
-                                addToolResult={addToolResult}
-                                skipToolRendering
-                              />
+              <div className="h-full overflow-hidden rounded-3xl">
+                <div
+                  ref={scrollRef}
+                  className="custom-scrollbar h-full overflow-y-auto px-4 py-4 md:px-6"
+                >
+                  <div className="space-y-4">
+                    {messages.map((message) => {
+                      if (message.role === 'user') {
+                        return (
+                          <div key={message.id} className="flex justify-end">
+                            <div className="max-w-[85%] rounded-2xl bg-[#0171E3] px-4 py-2.5 text-sm text-white">
+                              {message.content}
                             </div>
-                          ) : null}
-                        </div>
-                      );
-                    }
+                          </div>
+                        );
+                      }
 
-                    return null;
-                  })}
+                      if (message.role === 'assistant') {
+                        const toolInvocations =
+                          message.parts
+                            ?.filter(
+                              (part) =>
+                                part.type === 'tool-invocation' &&
+                                part.toolInvocation?.state === 'result'
+                            )
+                            .map((part) =>
+                              part.type === 'tool-invocation'
+                                ? part.toolInvocation
+                                : null
+                            )
+                            .filter(Boolean) || [];
 
-                  {isLoading ? (
-                    <div className="flex items-center gap-2 text-sm text-neutral-600">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Thinking...
-                    </div>
-                  ) : null}
+                        return (
+                          <div key={message.id} className="space-y-3">
+                            {toolInvocations.length > 0 ? (
+                              <ToolRenderer
+                                toolInvocations={toolInvocations as any[]}
+                                messageId={message.id}
+                              />
+                            ) : null}
+                            {message.content?.trim() ? (
+                              <div className="max-w-[90%] rounded-2xl bg-white/80 px-4 py-3 text-sm text-neutral-800">
+                                <ChatMessageContent
+                                  message={message as any}
+                                  isLast={false}
+                                  isLoading={isLoading}
+                                  reload={reload}
+                                  addToolResult={addToolResult}
+                                  skipToolRendering
+                                />
+                              </div>
+                            ) : null}
+                          </div>
+                        );
+                      }
+
+                      return null;
+                    })}
+
+                    {isLoading ? (
+                      <div className="flex items-center gap-2 text-sm text-neutral-600">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Thinking...
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -222,6 +245,11 @@ export default function HomeLandingChat() {
               type="text"
               value={input}
               onChange={handleInputChange}
+              onFocus={() => {
+                if (hasStartedChat) {
+                  setIsChatExpanded(true);
+                }
+              }}
               placeholder="Ask me anything…"
               className="w-full border-none bg-transparent text-base text-neutral-800 placeholder:text-neutral-500 focus:outline-none dark:text-neutral-200 dark:placeholder:text-neutral-500"
             />
@@ -247,15 +275,25 @@ export default function HomeLandingChat() {
         <motion.div
           layout
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="mt-4 w-full max-w-2xl transition-opacity duration-300"
+          className="mt-4 w-full max-w-2xl transition-all duration-300"
         >
-          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          <div
+            className={
+              isChatExpanded
+                ? 'custom-scrollbar flex w-full gap-2 overflow-x-auto pb-1'
+                : 'grid w-full grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-5'
+            }
+          >
             {questionConfig.map(({ key, color, icon: Icon }) => (
               <Button
                 key={key}
                 onClick={() => submitQuery(questions[key])}
                 variant="outline"
-                className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10"
+                className={
+                  isChatExpanded
+                    ? 'border-border hover:bg-border/30 h-auto min-w-[120px] cursor-pointer rounded-xl border bg-white/30 px-4 py-3 shadow-none backdrop-blur-lg active:scale-95'
+                    : 'border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10'
+                }
               >
                 <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-700">
                   <Icon size={22} strokeWidth={2} color={color} />
@@ -267,7 +305,7 @@ export default function HomeLandingChat() {
         </motion.div>
       </div>
 
-      {hasStartedChat ? (
+      {hasStartedChat && isChatExpanded ? (
         <button
           type="button"
           onClick={() => stop()}
