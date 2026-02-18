@@ -12,10 +12,8 @@ import {
   PartyPopper,
   UserRoundSearch,
 } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { withBasePath } from '@/lib/base-path';
+import { useRef, useState } from 'react';
 
 /* ---------- quick-question data ---------- */
 const questions = {
@@ -61,25 +59,6 @@ export default function Home() {
     },
   };
 
-  useEffect(() => {
-    // Précharger les assets du chat en arrière-plan
-    const img = new window.Image();
-    img.src = withBasePath('/landing-memojis.png');
-
-    // Précharger les vidéos aussi
-    const linkWebm = document.createElement('link');
-    linkWebm.rel = 'preload'; // Note: prefetch au lieu de preload
-    linkWebm.as = 'video';
-    linkWebm.href = withBasePath('/final_memojis.webm');
-    document.head.appendChild(linkWebm);
-
-    const linkMp4 = document.createElement('link');
-    linkMp4.rel = 'prefetch';
-    linkMp4.as = 'video';
-    linkMp4.href = withBasePath('/final_memojis_ios.mp4');
-    document.head.appendChild(linkMp4);
-  }, []);
-
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-10 md:pb-20">
       {/* big blurred footer word */}
@@ -111,24 +90,12 @@ export default function Home() {
         </h1>
       </motion.div>
 
-      {/* centre memoji */}
-      <div className="relative z-10 h-52 w-48 overflow-hidden sm:h-72 sm:w-72">
-        <Image
-          src={withBasePath('/landing-memojis.png')}
-          alt="Hero memoji"
-          width={2000}
-          height={2000}
-          priority
-          className="translate-y-14 scale-[2] object-cover"
-        />
-      </div>
-
       {/* input + quick buttons */}
       <motion.div
         variants={bottomElementVariants}
         initial="hidden"
         animate="visible"
-        className="z-10 mt-4 flex w-full flex-col items-center justify-center md:px-0"
+        className="z-10 mt-6 flex w-full flex-col items-center justify-center md:px-0"
       >
         {/* free-form question */}
         <form
