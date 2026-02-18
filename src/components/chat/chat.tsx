@@ -3,7 +3,7 @@ import { useChat } from '@ai-sdk/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Component imports
@@ -134,6 +134,7 @@ const Chat = ({ embedded = false }: ChatProps) => {
   const [autoSubmitted, setAutoSubmitted] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [isTalking, setIsTalking] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const chatApiPath = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim() || '/api/chat';
 
   const {
@@ -223,16 +224,16 @@ const Chat = ({ embedded = false }: ChatProps) => {
       )
   );
 
-  //@ts-ignore
-  const submitQuery = (query) => {
+  const submitQuery = useCallback((query: string) => {
     if (!query.trim() || isToolInProgress) return;
 
+    setHasInteracted(true);
     setLoadingSubmit(true);
     append({
       role: 'user',
       content: query,
     });
-  };
+  }, [append, isToolInProgress]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -244,10 +245,11 @@ const Chat = ({ embedded = false }: ChatProps) => {
 
     if (initialQuery && !autoSubmitted) {
       setAutoSubmitted(true);
+      setHasInteracted(true);
       setInput('');
       submitQuery(initialQuery);
     }
-  }, [initialQuery, autoSubmitted]);
+  }, [initialQuery, autoSubmitted, setInput, submitQuery]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -260,6 +262,26 @@ const Chat = ({ embedded = false }: ChatProps) => {
       }
     }
   }, [isTalking]);
+
+  useEffect(() => {
+    const handleExternalQuery = (event: Event) => {
+      const customEvent = event as CustomEvent<string>;
+      if (typeof customEvent.detail === 'string') {
+        submitQuery(customEvent.detail);
+      }
+    };
+
+    window.addEventListener(
+      'portfolio:submit-query',
+      handleExternalQuery as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        'portfolio:submit-query',
+        handleExternalQuery as EventListener
+      );
+    };
+  }, [submitQuery]);
 
   //@ts-ignore
   const onSubmit = (e) => {
@@ -287,6 +309,7 @@ const Chat = ({ embedded = false }: ChatProps) => {
   const headerHeight = hasActiveTool ? 100 : 180;
 
   const topLayerPositionClass = embedded ? 'absolute' : 'fixed';
+  const shouldCenterBottomBar = embedded && isEmptyState && !hasInteracted;
 
   return (
     <div className={`relative overflow-hidden ${embedded ? 'h-full' : 'h-screen'}`}>
@@ -384,8 +407,20 @@ const Chat = ({ embedded = false }: ChatProps) => {
           </AnimatePresence>
         </div>
 
-        {/* Fixed Bottom Bar */}
-        <div className="sticky bottom-0 bg-white px-2 pt-3 md:px-0 md:pb-4">
+        {/* Bottom Bar */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: 1,
+            y: shouldCenterBottomBar ? -18 : 0,
+          }}
+          transition={{ type: 'spring', stiffness: 230, damping: 30 }}
+          className={
+            shouldCenterBottomBar
+              ? 'absolute right-0 bottom-auto left-0 top-[46%] z-40 px-2 md:px-0'
+              : 'sticky bottom-0 z-40 bg-white px-2 pt-3 md:px-0 md:pb-4'
+          }
+        >
           <div className="relative flex flex-col items-center gap-3">
             <HelperBoost submitQuery={submitQuery} setInput={setInput} />
             <ChatBottombar
@@ -395,9 +430,10 @@ const Chat = ({ embedded = false }: ChatProps) => {
               isLoading={isLoading}
               stop={handleStop}
               isToolInProgress={isToolInProgress}
+              onInputFocus={() => setHasInteracted(true)}
             />
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ interface ChatBottombarProps {
   input: string;
   isToolInProgress: boolean;
   disabled?: boolean;
+  onInputFocus?: () => void;
 }
 
 export default function ChatBottombar({
@@ -27,6 +28,7 @@ export default function ChatBottombar({
   stop,
   isToolInProgress,
   disabled = false,
+  onInputFocus,
 }: ChatBottombarProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -61,6 +63,7 @@ export default function ChatBottombar({
             type="text"
             value={input}
             onChange={handleInputChange}
+            onFocus={onInputFocus}
             onKeyDown={handleKeyPress}
             placeholder={
               disabled ? '' : isToolInProgress ? 'Tool is in progress...' : 'Ask me anything'
