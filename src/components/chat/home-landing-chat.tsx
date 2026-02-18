@@ -126,7 +126,7 @@ export default function HomeLandingChat() {
                 y: 0,
                 scaleX: 1,
                 scaleY: 1,
-                height: 420,
+                height: 'clamp(360px,58vh,640px)',
               }}
               exit={{ opacity: 0, y: 12, scaleX: 0.9, scaleY: 0.7, height: 0 }}
               transition={{
@@ -247,9 +247,7 @@ export default function HomeLandingChat() {
         <motion.div
           layout
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className={`mt-4 w-full max-w-2xl transition-opacity duration-300 ${
-            hasStartedChat ? 'pointer-events-none opacity-35' : 'opacity-100'
-          }`}
+          className="mt-4 w-full max-w-2xl transition-opacity duration-300"
         >
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-5">
             {questionConfig.map(({ key, color, icon: Icon }) => (

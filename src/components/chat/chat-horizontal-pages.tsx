@@ -120,7 +120,7 @@ export default function ChatHorizontalPages() {
         ref={containerRef}
         className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        <section className="h-full w-screen flex-none snap-start overflow-y-auto pt-14">
+        <section className="h-full w-screen flex-none snap-start overflow-hidden pt-14">
           <HomeLandingChat />
         </section>
 
