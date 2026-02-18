@@ -19,7 +19,7 @@ const InternshipCard = () => {
         <div className="flex items-center gap-4">
           <div className="bg-muted h-16 w-16 overflow-hidden rounded-full shadow-md">
             <img
-              src="/avatar-landing.png"
+              src="/huan01.jpg"
               alt="Zenghuan Wang avatar"
               className="h-full w-full object-cover"
             />

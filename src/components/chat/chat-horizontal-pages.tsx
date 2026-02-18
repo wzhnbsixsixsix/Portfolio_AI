@@ -21,7 +21,7 @@ const sections = [
   { key: 'about', label: 'About', icon: UserRound },
   { key: 'projects', label: 'Featured Projects', icon: FolderKanban },
   { key: 'skills', label: 'My Skills', icon: Sparkles },
-  { key: 'guestbook', label: '留言', icon: NotebookPen },
+  { key: 'guestbook', label: 'Guestbook', icon: NotebookPen },
 ] as const;
 
 const clampIndex = (index: number) =>
@@ -75,7 +75,7 @@ export default function ChatHorizontalPages() {
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute top-4 left-1/2 z-[80] -translate-x-1/2 px-4">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-neutral-200 bg-white/85 p-1.5 shadow-sm backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-white/45 bg-gradient-to-b from-white/65 to-white/30 p-1.5 shadow-[0_14px_35px_rgba(0,0,0,0.12)] backdrop-blur-xl">
           {sections.map(({ key, label, icon: Icon }, index) => (
             <button
               key={key}
@@ -83,8 +83,8 @@ export default function ChatHorizontalPages() {
               onClick={() => scrollToIndex(index)}
               className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition md:text-sm ${
                 activeIndex === index
-                  ? 'bg-black text-white'
-                  : 'text-neutral-700 hover:bg-neutral-100'
+                  ? 'bg-black/90 text-white shadow-sm'
+                  : 'text-neutral-700 hover:bg-white/60'
               }`}
             >
               <span className="flex items-center gap-1.5">

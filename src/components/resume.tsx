@@ -13,7 +13,7 @@ export function Resume() {
     fileType: 'PDF',
     lastUpdated: 'February 2026',
     fileSize: '0.5 MB',
-    previewImageSrc: '/avatar-landing.png',
+    previewImageSrc: '/huan01.jpg',
     downloadUrl: '/wang_cv.pdf',
   };
 

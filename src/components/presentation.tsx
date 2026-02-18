@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Download } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 
@@ -13,7 +14,7 @@ export function Presentation() {
     // Add a newline character after the emoji
     description:
       "Hey 👋\nI'm Zenghuan Wang, an AI Engineer based in Shenzhen, China. I focus on building practical AI products and continuously improving my engineering skills through real projects.\n\nEducation: University of Exeter (2024-2026), Guangdong (2022-2024), City University of Hong Kong (2026-2028).",
-    src: '/avatar-landing.png',
+    src: '/huan01.jpg',
     fallbackSrc:
       'https://images.unsplash.com/photo-1610216705422-caa3fcb6d158?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3',
   };
@@ -113,6 +114,22 @@ export function Presentation() {
                 </span>
               )
             )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.72, duration: 0.45 }}
+            className="mt-6"
+          >
+            <a
+              href="/wang_cv.pdf"
+              download
+              className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-black/85"
+            >
+              <Download className="h-4 w-4" />
+              Download Resume
+            </a>
           </motion.div>
         </div>
       </div>
