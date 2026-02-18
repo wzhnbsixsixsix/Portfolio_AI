@@ -13,7 +13,8 @@ import {
   PartyPopper,
   UserRoundSearch,
 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import ChatMessageContent from './chat-message-content';
 import ToolRenderer from './tool-renderer';
 
@@ -36,6 +37,7 @@ const questionConfig = [
 export default function HomeLandingChat() {
   const chatApiPath = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim() || '/api/chat';
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [chatError, setChatError] = useState('');
 
   const {
     messages,
@@ -49,15 +51,26 @@ export default function HomeLandingChat() {
     setInput,
   } = useChat({
     api: chatApiPath,
+    onError: (error) => {
+      const message = error?.message || 'Chat request failed.';
+      setChatError(message);
+      toast.error(message);
+    },
   });
 
   const hasStartedChat = messages.length > 0 || isLoading;
 
-  const submitQuery = (query: string) => {
+  const submitQuery = async (query: string) => {
     if (!query.trim() || isLoading) return;
-    append({
+    setChatError('');
+    await append({
       role: 'user',
       content: query.trim(),
+    }).catch((error) => {
+      console.error(error);
+      const message = 'Failed to send message. Please retry.';
+      setChatError(message);
+      toast.error(message);
     });
     setInput('');
   };
@@ -68,7 +81,7 @@ export default function HomeLandingChat() {
   }, [messages, isLoading]);
 
   return (
-    <div className="relative flex min-h-full w-full flex-col items-center overflow-hidden px-4 pb-10 md:pb-20">
+    <div className="relative flex min-h-[calc(100vh-3.5rem)] w-full flex-col items-center overflow-hidden px-4 pb-10 md:pb-20">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
         <div
           className="hidden bg-gradient-to-b from-neutral-500/10 to-neutral-500/0 bg-clip-text text-[10rem] leading-none font-black text-transparent select-none sm:block lg:text-[16rem]"
@@ -92,16 +105,38 @@ export default function HomeLandingChat() {
         </h1>
       </motion.div>
 
-      <div className="z-10 flex w-full max-w-5xl flex-col items-center">
+      <div
+        className={`z-10 flex w-full max-w-5xl flex-1 flex-col items-center ${
+          hasStartedChat ? 'justify-start pt-2 md:pt-4' : 'justify-center'
+        }`}
+      >
         <AnimatePresence mode="wait">
           {hasStartedChat ? (
             <motion.div
               key="chat-panel"
-              initial={{ opacity: 0, y: 16, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 420 }}
-              exit={{ opacity: 0, y: 12, height: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              initial={{
+                opacity: 0,
+                y: 18,
+                scaleX: 0.82,
+                scaleY: 0.36,
+                height: 0,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scaleX: 1,
+                scaleY: 1,
+                height: 420,
+              }}
+              exit={{ opacity: 0, y: 12, scaleX: 0.9, scaleY: 0.7, height: 0 }}
+              transition={{
+                type: 'spring',
+                stiffness: 210,
+                damping: 24,
+                mass: 0.9,
+              }}
               className="mb-4 w-full overflow-hidden rounded-3xl border border-white/40 bg-white/45 shadow-[0_20px_60px_rgba(0,0,0,0.16)] backdrop-blur-2xl"
+              style={{ transformOrigin: '50% 100%' }}
             >
               <div
                 ref={scrollRef}
@@ -204,6 +239,10 @@ export default function HomeLandingChat() {
             </button>
           </div>
         </motion.form>
+
+        {chatError ? (
+          <p className="mt-3 text-sm text-red-500">{chatError}</p>
+        ) : null}
 
         <motion.div
           layout
