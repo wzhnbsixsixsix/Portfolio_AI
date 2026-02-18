@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
+import { withBasePath } from '@/lib/base-path';
 
 export function Presentation() {
   // Personal information
@@ -43,11 +44,28 @@ export function Presentation() {
     },
   };
 
+  const handleResumeDownload = () => {
+    const resumeUrl = withBasePath('/wang_cv.pdf');
+    try {
+      const link = document.createElement('a');
+      link.href = resumeUrl;
+      link.download = 'wang_cv.pdf';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Resume download failed, falling back to location:', error);
+      window.location.href = resumeUrl;
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-5xl py-6 font-sans">
       <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         {/* Image section */}
-        <div className="relative mx-auto aspect-square w-full max-w-sm">
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-md">
           <div className="relative h-full w-full overflow-hidden rounded-2xl">
             <motion.div
               initial={{ scale: 0.92, opacity: 0 }}
@@ -122,14 +140,14 @@ export function Presentation() {
             transition={{ delay: 0.72, duration: 0.45 }}
             className="mt-6"
           >
-            <a
-              href="/wang_cv.pdf"
-              download
+            <button
+              type="button"
+              onClick={handleResumeDownload}
               className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-black/85"
             >
               <Download className="h-4 w-4" />
               Download Resume
-            </a>
+            </button>
           </motion.div>
         </div>
       </div>
