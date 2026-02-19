@@ -44,41 +44,27 @@ export function Presentation() {
     },
   };
 
-  const handleResumeDownload = () => {
-    const resumeUrl = withBasePath('/wang_cv.pdf');
-    try {
-      const link = document.createElement('a');
-      link.href = resumeUrl;
-      link.download = 'wang_cv.pdf';
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Resume download failed, falling back to location:', error);
-      window.location.href = resumeUrl;
-    }
-  };
+  // Removed complex download logic in favor of simple anchor tag
 
   return (
     <div className="mx-auto w-full max-w-5xl py-6 font-sans">
       <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         {/* Image section */}
-        <div className="relative mx-auto aspect-[3/4] w-full max-w-[300px] md:max-w-[340px]">
-          <div className="relative h-full w-full overflow-hidden rounded-2xl">
+        <div className="relative mx-auto w-full max-w-[300px] md:max-w-[340px]">
+          <div className="relative h-auto w-full overflow-hidden rounded-2xl">
             <motion.div
               initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-              className="h-full w-full"
+              className="h-auto w-full"
             >
               <Image
                 src={withBasePath(profile.src)}
                 alt={profile.name}
                 width={600}
                 height={800}
-                className="h-full w-full object-cover object-center"
+                className="h-auto w-full object-contain"
+                priority
                 onError={(e) => {
                   // Fallback to placeholder if image fails to load
                   const target = e.target as HTMLImageElement;
@@ -140,14 +126,16 @@ export function Presentation() {
             transition={{ delay: 0.72, duration: 0.45 }}
             className="mt-6"
           >
-            <button
-              type="button"
-              onClick={handleResumeDownload}
+            <a
+              href={withBasePath('/wang_cv.pdf')}
+              download="wang_cv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-black/85"
             >
               <Download className="h-4 w-4" />
               Download Resume
-            </button>
+            </a>
           </motion.div>
         </div>
       </div>
