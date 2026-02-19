@@ -156,7 +156,7 @@ export default function GuestbookSection() {
                   onChange={(e) => setIsPrivate(e.target.checked)}
                   className="accent-black h-4 w-4 rounded border-gray-300"
                 />
-                <span>Private (Admin only)</span>
+                <span>Private</span>
               </label>
               <button
                 type="submit"

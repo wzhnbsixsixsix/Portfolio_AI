@@ -15,6 +15,7 @@ interface GuestbookEntry {
 interface ChatLog {
   id: string;
   timestamp: string;
+  role?: 'user' | 'assistant';
   content: string;
 }
 
@@ -251,8 +252,14 @@ export default function AdminPage() {
                       className="rounded-xl border border-neutral-200 bg-white p-4"
                     >
                       <div className="mb-2 flex items-center justify-between">
-                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-600">
-                          User Message
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                            (log.role || 'user') === 'assistant'
+                              ? 'bg-purple-50 text-purple-600'
+                              : 'bg-blue-50 text-blue-600'
+                          }`}
+                        >
+                          {(log.role || 'user') === 'assistant' ? 'AI Response' : 'User Message'}
                         </span>
                         <span className="text-muted-foreground text-xs">
                           {formatDate(log.timestamp)}

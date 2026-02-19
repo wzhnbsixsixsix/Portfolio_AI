@@ -17,20 +17,18 @@ export const maxDuration = 30;
 
 const LOG_FILE = path.join('/tmp', 'chat-logs.json');
 
-async function logChatMessage(messages: any[]) {
+async function logEntry(role: string, content: string) {
   try {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role !== 'user') return;
+    if (!content) return;
 
     const logEntry = {
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
-      content: lastMessage.content,
-      // Optional: store full context if needed, but might be heavy
-      // allMessages: messages, 
+      role,
+      content,
     };
 
-    console.log(`[Chat Log] User: ${lastMessage.content}`);
+    // console.log(`[Chat Log] ${role}: ${content}`);
 
     const dir = path.dirname(LOG_FILE);
     await fs.mkdir(dir, { recursive: true });
@@ -150,8 +148,8 @@ export async function POST(req: Request) {
       });
     }
 
-    // Log the chat
-    await logChatMessage(messages);
+    // Log the user message
+    await logEntry('user', messages[messages.length - 1].content);
 
     const tools = {
       getProjects,
@@ -170,6 +168,10 @@ export async function POST(req: Request) {
       toolCallStreaming: true,
       tools,
       maxSteps: 2,
+      onFinish: async (event) => {
+        // Log the assistant response
+        await logEntry('assistant', event.text);
+      },
     });
 
     return result.toDataStreamResponse({
