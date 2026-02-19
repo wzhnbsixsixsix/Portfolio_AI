@@ -14,11 +14,11 @@ const formatDate = (isoDate: string) => {
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return '';
 
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
     minute: '2-digit',
   }).format(date);
 };
@@ -26,6 +26,7 @@ const formatDate = (isoDate: string) => {
 export default function GuestbookSection() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +44,7 @@ export default function GuestbookSection() {
         setEntries(Array.isArray(data.entries) ? data.entries : []);
       } catch (loadError) {
         console.error(loadError);
-        setError('留言加载失败，请稍后再试。');
+        setError('Failed to load entries, please try again later.');
       } finally {
         setIsLoading(false);
       }
@@ -53,15 +54,15 @@ export default function GuestbookSection() {
   }, []);
 
   const entryCountText = useMemo(() => {
-    if (entries.length === 0) return '还没有留言，来做第一个吧。';
-    return `共 ${entries.length} 条留言`;
+    if (entries.length === 0) return 'No entries yet. Be the first one!';
+    return `${entries.length} entries`;
   }, [entries.length]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!name.trim() || !message.trim()) {
-      setError('请填写昵称和留言内容。');
+      setError('Please fill in both name and message.');
       return;
     }
 
@@ -77,20 +78,31 @@ export default function GuestbookSection() {
         body: JSON.stringify({
           name: name.trim(),
           message: message.trim(),
+          isPrivate,
         }),
       });
 
       if (!response.ok) {
         const reason = await response.text();
-        throw new Error(reason || '留言提交失败');
+        throw new Error(reason || 'Failed to submit entry');
       }
 
       const data = (await response.json()) as { entry: GuestbookEntry };
-      setEntries((prev) => [data.entry, ...prev].slice(0, 200));
+      
+      // Only add to local list if it's public
+      if (!isPrivate) {
+        setEntries((prev) => [data.entry, ...prev].slice(0, 200));
+      } else {
+        setError('Private message received! (Visible to admin only)');
+        // Wait a bit then clear the success message
+        setTimeout(() => setError(''), 3000);
+      }
+      
       setMessage('');
+      setIsPrivate(false);
     } catch (submitError) {
       console.error(submitError);
-      setError('提交失败，请稍后重试。');
+      setError('Failed to submit, please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -103,7 +115,7 @@ export default function GuestbookSection() {
           Leave a Message
         </h2>
         <p className="text-muted-foreground mt-3 text-sm md:text-base">
-          留下你对这个作品集的看法或合作意向，这些留言会被保存。
+          Leave your thoughts on this portfolio or collaboration intentions. These messages will be saved.
         </p>
       </div>
 
@@ -119,7 +131,7 @@ export default function GuestbookSection() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             maxLength={60}
-            placeholder="你的昵称"
+            placeholder="Your Name"
             className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base md:text-sm outline-none transition focus:border-neutral-500"
           />
 
@@ -127,7 +139,7 @@ export default function GuestbookSection() {
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             maxLength={800}
-            placeholder="想说点什么..."
+            placeholder="Say something..."
             rows={5}
             className="w-full resize-none rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base md:text-sm outline-none transition focus:border-neutral-500"
           />
@@ -136,16 +148,31 @@ export default function GuestbookSection() {
             <span className="text-muted-foreground text-xs">
               {message.length}/800
             </span>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="cursor-pointer rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isSubmitting ? '提交中...' : '提交留言'}
-            </button>
+            <div className="flex items-center gap-4">
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-neutral-600 select-none hover:text-neutral-900">
+                <input
+                  type="checkbox"
+                  checked={isPrivate}
+                  onChange={(e) => setIsPrivate(e.target.checked)}
+                  className="accent-black h-4 w-4 rounded border-gray-300"
+                />
+                <span>Private (Admin only)</span>
+              </label>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="cursor-pointer rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
           </div>
 
-          {error ? <p className="text-sm text-red-500">{error}</p> : null}
+          {error ? (
+            <p className={`text-sm ${error.includes('received') ? 'text-green-600' : 'text-red-500'}`}>
+              {error}
+            </p>
+          ) : null}
         </div>
       </motion.form>
 
@@ -153,7 +180,7 @@ export default function GuestbookSection() {
         <p className="text-muted-foreground mb-4 text-sm">{entryCountText}</p>
 
         {isLoading ? (
-          <div className="text-muted-foreground text-sm">正在加载留言...</div>
+          <div className="text-muted-foreground text-sm">Loading entries...</div>
         ) : (
           <div className="space-y-3">
             {entries.map((entry) => (
@@ -177,6 +204,10 @@ export default function GuestbookSection() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mt-8 flex justify-end opacity-20 hover:opacity-100 transition-opacity">
+        <a href="/admin" className="text-xs text-neutral-400 hover:text-neutral-600">Admin Login</a>
       </div>
     </div>
   );

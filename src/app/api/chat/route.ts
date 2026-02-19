@@ -1,5 +1,7 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { SYSTEM_PROMPT } from './prompt';
 import { getContact } from './tools/getContact';
 import { getCrazy } from './tools/getCrazy';
@@ -12,6 +14,44 @@ import { getSports } from './tools/getSport';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
+
+const LOG_FILE = path.join(process.cwd(), 'data', 'chat-logs.json');
+
+async function logChatMessage(messages: any[]) {
+  try {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== 'user') return;
+
+    const logEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      content: lastMessage.content,
+      // Optional: store full context if needed, but might be heavy
+      // allMessages: messages, 
+    };
+
+    console.log(`[Chat Log] User: ${lastMessage.content}`);
+
+    const dir = path.dirname(LOG_FILE);
+    await fs.mkdir(dir, { recursive: true });
+
+    let existingLogs = [];
+    try {
+      const data = await fs.readFile(LOG_FILE, 'utf8');
+      existingLogs = JSON.parse(data);
+    } catch (e) {
+      // Ignore read error, start fresh
+    }
+
+    if (!Array.isArray(existingLogs)) existingLogs = [];
+
+    // Keep last 100 chats
+    const updatedLogs = [logEntry, ...existingLogs].slice(0, 100);
+    await fs.writeFile(LOG_FILE, JSON.stringify(updatedLogs, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Failed to log chat:', err);
+  }
+}
 
 const DEFAULT_DASHSCOPE_BASE_URL =
   'https://dashscope.aliyuncs.com/compatible-mode/v1';
@@ -109,6 +149,9 @@ export async function POST(req: Request) {
         headers: corsHeaders,
       });
     }
+
+    // Log the chat
+    await logChatMessage(messages);
 
     const tools = {
       getProjects,

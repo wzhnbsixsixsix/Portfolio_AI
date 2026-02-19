@@ -9,6 +9,7 @@ interface GuestbookEntry {
   name: string;
   message: string;
   createdAt: string;
+  isPrivate?: boolean;
 }
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -40,7 +41,9 @@ const writeEntries = async (entries: GuestbookEntry[]) => {
 
 export async function GET() {
   const entries = await readEntries();
-  return Response.json({ entries });
+  // Filter out private entries for public display
+  const publicEntries = entries.filter((entry) => !entry.isPrivate);
+  return Response.json({ entries: publicEntries });
 }
 
 export async function POST(req: Request) {
@@ -48,6 +51,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const name = typeof body?.name === 'string' ? body.name.trim() : '';
     const message = typeof body?.message === 'string' ? body.message.trim() : '';
+    const isPrivate = typeof body?.isPrivate === 'boolean' ? body.isPrivate : false;
 
     if (!name || !message) {
       return new Response('Name and message are required.', { status: 400 });
@@ -63,7 +67,14 @@ export async function POST(req: Request) {
       name,
       message,
       createdAt: new Date().toISOString(),
+      isPrivate,
     };
+
+    // Log for Vercel Dashboard visibility
+    console.log(`[Guestbook] New Entry: ${isPrivate ? '(Private)' : '(Public)'}`);
+    console.log(`Name: ${name}`);
+    console.log(`Message: ${message}`);
+    console.log('-------------------');
 
     const nextEntries = [entry, ...entries].slice(0, 200);
     await writeEntries(nextEntries);
