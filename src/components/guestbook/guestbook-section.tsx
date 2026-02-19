@@ -206,8 +206,10 @@ export default function GuestbookSection() {
         )}
       </div>
 
-      <div className="mt-8 flex justify-end opacity-20 hover:opacity-100 transition-opacity">
-        <a href="/admin" className="text-xs text-neutral-400 hover:text-neutral-600">Admin Login</a>
+      <div className="mt-8 flex justify-end">
+        <a href="/admin" className="text-xs text-neutral-400 hover:text-neutral-800 transition-colors flex items-center gap-1">
+            <span className="opacity-50">Admin Access</span>
+        </a>
       </div>
     </div>
   );

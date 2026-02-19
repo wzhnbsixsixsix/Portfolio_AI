@@ -15,7 +15,7 @@ import { getSports } from './tools/getSport';
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
-const LOG_FILE = path.join(process.cwd(), 'data', 'chat-logs.json');
+const LOG_FILE = path.join('/tmp', 'chat-logs.json');
 
 async function logChatMessage(messages: any[]) {
   try {

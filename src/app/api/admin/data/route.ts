@@ -3,8 +3,8 @@ import path from 'path';
 
 export const runtime = 'nodejs';
 
-const GUESTBOOK_FILE = path.join(process.cwd(), 'data', 'guestbook.json');
-const CHAT_LOGS_FILE = path.join(process.cwd(), 'data', 'chat-logs.json');
+const GUESTBOOK_FILE = path.join('/tmp', 'guestbook.json');
+const CHAT_LOGS_FILE = path.join('/tmp', 'chat-logs.json');
 
 async function readJsonFile(filePath: string) {
     try {

@@ -12,11 +12,12 @@ interface GuestbookEntry {
   isPrivate?: boolean;
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+const DATA_DIR = '/tmp';
 const DATA_FILE = path.join(DATA_DIR, 'guestbook.json');
 
 const readEntries = async (): Promise<GuestbookEntry[]> => {
   try {
+    // Ensure tmp dir exists (it should, but safety first)
     await fs.mkdir(DATA_DIR, { recursive: true });
     const raw = await fs.readFile(DATA_FILE, 'utf8').catch(async (error: NodeJS.ErrnoException) => {
       if (error.code === 'ENOENT') {

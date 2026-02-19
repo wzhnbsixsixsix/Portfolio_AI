@@ -64,15 +64,37 @@ export default function AdminPage() {
     }).format(new Date(isoDate));
   };
 
+  const deleteEntry = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this entry?')) return;
+    
+    try {
+      const res = await fetch('/api/admin/delete', {
+        method: 'POST',
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        fetchData(); // Refresh list
+      } else {
+        alert('Failed to delete');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting');
+    }
+  };
+
   if (!isAuthenticated) {
+    // ... existing login UI ...
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-        <motion.form
+        {/* ... */}
+         <motion.form
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           onSubmit={handleLogin}
           className="w-full max-w-sm overflow-hidden rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm"
         >
+          {/* ... login form content ... */}
           <div className="mb-6 flex justify-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
               <Lock className="h-5 w-5 text-neutral-500" />
@@ -114,7 +136,8 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50 p-6 md:p-12">
-      <div className="mx-auto max-w-5xl">
+      {/* ... header and tabs ... */}
+       <div className="mx-auto max-w-5xl">
         <header className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
@@ -131,6 +154,7 @@ export default function AdminPage() {
         </header>
 
         <div className="mb-6 flex gap-2 rounded-xl bg-white p-1.5 shadow-sm w-fit">
+            {/* ... tab buttons ... */}
           <button
             onClick={() => setActiveTab('guestbook')}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
@@ -191,18 +215,28 @@ export default function AdminPage() {
                             </span>
                           )}
                         </div>
-                        <span className="text-muted-foreground text-xs">
-                          {formatDate(entry.createdAt)}
-                        </span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-muted-foreground text-xs">
+                            {formatDate(entry.createdAt)}
+                            </span>
+                            <button 
+                                onClick={() => deleteEntry(entry.id)}
+                                className="text-xs text-red-500 hover:text-red-700 hover:underline"
+                            >
+                                Delete
+                            </button>
+                        </div>
                       </div>
                       <p className="text-neutral-700 whitespace-pre-wrap">{entry.message}</p>
                     </div>
                   ))}
-                  {data?.guestbook.length === 0 && (
+                  {/* ... empty state ... */}
+                   {data?.guestbook.length === 0 && (
                     <p className="text-center py-10 text-neutral-500">No guestbook entries found.</p>
                   )}
                 </motion.div>
               ) : (
+                // ... chat log view ...
                 <motion.div
                   key="chat"
                   initial={{ opacity: 0, y: 10 }}
