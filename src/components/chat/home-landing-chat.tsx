@@ -84,7 +84,7 @@ export default function HomeLandingChat() {
   }, [messages, isLoading]);
 
   return (
-    <div className="relative flex min-h-[calc(100vh-3.5rem)] w-full flex-col items-center overflow-hidden px-4 pb-10 md:pb-20">
+    <div className="relative flex min-h-[calc(100dvh-3.5rem)] w-full flex-col items-center overflow-hidden px-4 pb-10 md:pb-20">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
         <div
           className="hidden bg-gradient-to-b from-neutral-500/10 to-neutral-500/0 bg-clip-text text-[10rem] leading-none font-black text-transparent select-none sm:block lg:text-[16rem]"

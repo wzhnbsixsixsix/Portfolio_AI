@@ -120,7 +120,7 @@ export default function GuestbookSection() {
             onChange={(event) => setName(event.target.value)}
             maxLength={60}
             placeholder="你的昵称"
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-neutral-500"
+            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base md:text-sm outline-none transition focus:border-neutral-500"
           />
 
           <textarea
@@ -129,7 +129,7 @@ export default function GuestbookSection() {
             maxLength={800}
             placeholder="想说点什么..."
             rows={5}
-            className="w-full resize-none rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-neutral-500"
+            className="w-full resize-none rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base md:text-sm outline-none transition focus:border-neutral-500"
           />
 
           <div className="flex items-center justify-between gap-3">

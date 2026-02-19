@@ -73,7 +73,7 @@ export default function ChatHorizontalPages() {
   }, [activeIndex, scrollToIndex]);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-background">
+    <div className="relative h-[100dvh] w-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute top-4 left-1/2 z-[80] -translate-x-1/2 px-4">
         <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-white/45 bg-gradient-to-b from-white/65 to-white/30 p-1.5 shadow-[0_14px_35px_rgba(0,0,0,0.12)] backdrop-blur-xl">
           {sections.map(({ key, label, icon: Icon }, index) => (
@@ -101,7 +101,7 @@ export default function ChatHorizontalPages() {
         aria-label="Previous page"
         onClick={() => scrollToIndex(activeIndex - 1)}
         disabled={activeIndex === 0}
-        className="absolute top-1/2 left-4 z-[80] -translate-y-1/2 rounded-full border border-neutral-200 bg-white/85 p-2 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="hidden md:block absolute top-1/2 left-4 z-[80] -translate-y-1/2 rounded-full border border-neutral-200 bg-white/85 p-2 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -111,7 +111,7 @@ export default function ChatHorizontalPages() {
         aria-label="Next page"
         onClick={() => scrollToIndex(activeIndex + 1)}
         disabled={activeIndex === sections.length - 1}
-        className="absolute top-1/2 right-4 z-[80] -translate-y-1/2 rounded-full border border-neutral-200 bg-white/85 p-2 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="hidden md:block absolute top-1/2 right-4 z-[80] -translate-y-1/2 rounded-full border border-neutral-200 bg-white/85 p-2 text-neutral-800 shadow-sm backdrop-blur-sm transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
