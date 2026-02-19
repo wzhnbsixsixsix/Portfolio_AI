@@ -131,7 +131,7 @@ export function Presentation() {
               download="wang_cv.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-black/85"
+              className="cursor-pointer inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-black/85"
             >
               <Download className="h-4 w-4" />
               Download Resume
