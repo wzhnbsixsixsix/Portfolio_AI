@@ -65,7 +65,7 @@ export function Presentation() {
     <div className="mx-auto w-full max-w-5xl py-6 font-sans">
       <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         {/* Image section */}
-        <div className="relative mx-auto aspect-[3/4] w-full max-w-sm">
+        <div className="relative mx-auto aspect-[3/4] w-full max-w-[300px] md:max-w-[340px]">
           <div className="relative h-full w-full overflow-hidden rounded-2xl">
             <motion.div
               initial={{ scale: 0.92, opacity: 0 }}
@@ -74,10 +74,10 @@ export function Presentation() {
               className="h-full w-full"
             >
               <Image
-                src={profile.src}
+                src={withBasePath(profile.src)}
                 alt={profile.name}
-                width={500}
-                height={500}
+                width={600}
+                height={800}
                 className="h-full w-full object-cover object-center"
                 onError={(e) => {
                   // Fallback to placeholder if image fails to load
